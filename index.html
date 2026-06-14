@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCheck - AI-Powered Trust Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #d1d5db;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            border-color: #4f46e5;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
+        }
+
+        .card-selected {
+            border-color: #4f46e5;
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .gauge {
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #4f46e5;
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .progress-step {
+            opacity: 0.3;
+            transition: all 0.5s ease;
+        }
+
+        .progress-step.active {
+            opacity: 1;
+        }
+
+        .progress-step.completed {
+            opacity: 1;
+        }
+
+        .gauge-container {
+            position: relative;
+        }
+
+        .share-btn {
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-black">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Header Component -->
+        <header class="mb-12 fade-in">
+            <div class="flex items-center justify-center space-x-3">
+                <div class="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white tracking-tight">TrustCheck</h1>
+            </div>
+            <p class="text-center text-gray-400 mt-2">AI-Powered Trust Analysis Platform</p>
+        </header>
+
+        <!-- Problem Selector Component -->
+        <section id="selector-section" class="mb-10 fade-in">
+            <h2 class="text-xl font-semibold text-gray-200 mb-6 text-center">Select Industry</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <div class="selector-card card-hover border-2 border-gray-800 rounded-xl p-6 cursor-pointer text-center" data-industry="real-estate">
+                    <div class="flex justify-center mb-4">
+                        <i data-lucide="home" class="w-10 h-10 text-indigo-500"></i>
+                    </div>
+                    <h3 class="font-semibold text-white mb-1">Real Estate</h3>
+                    <p class="text-sm text-gray-500">Verify listings</p>
+                </div>
+
+                <div class="selector-card card-hover border-2 border-gray-800 rounded-xl p-6 cursor-pointer text-center" data-industry="fintech">
+                    <div class="flex justify-center mb-4">
+                        <i data-lucide="landmark" class="w-10 h-10 text-green-500"></i>
+                    </div>
+                    <h3 class="font-semibold text-white mb-1">FinTech</h3>
+                    <p class="text-sm text-gray-500">Analyze statements</p>
+                </div>
+
+                <div class="selector-card card-hover border-2 border-gray-800 rounded-xl p-6 cursor-pointer text-center" data-industry="ecommerce">
+                    <div class="flex justify-center mb-4">
+                        <i data-lucide="shopping-cart" class="w-10 h-10 text-yellow-500"></i>
+                    </div>
+                    <h3 class="font-semibold text-white mb-1">E-commerce</h3>
+                    <p class="text-sm text-gray-500">Check sellers</p>
+                </div>
+
+                <div class="selector-card card-hover border-2 border-gray-800 rounded-xl p-6 cursor-pointer text-center" data-industry="edtech">
+                    <div class="flex justify-center mb-4">
+                        <i data-lucide="graduation-cap" class="w-10 h-10 text-pink-500"></i>
+                    </div>
+                    <h3 class="font-semibold text-white mb-1">EdTech</h3>
+                    <p class="text-sm text-gray-500">Verify courses</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Contextual Input Component -->
+        <section id="input-section" class="mb-10" style="display: none;">
+            
+            <!-- Real Estate Input -->
+            <div id="input-real-estate" class="input-container" style="display: none;">
+                <div class="slide-in border-2 border-gray-800 rounded-xl p-8 bg-gray-900/50">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="link" class="w-5 h-5 text-indigo-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold text-white">Property Listing URL</h3>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="url-input"
+                        placeholder="Paste MagicBricks/99Acres URL here..."
+                        class="w-full px-4 py-4 bg-black border-2 border-gray-800 rounded-lg text-white placeholder-gray-600 focus:border-indigo-500 focus:outline-none transition"
+                    >
+                    <button id="analyze-url-btn" class="mt-4 w-full md:w-auto px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+                        Analyze Listing
+                    </button>
+                </div>
+            </div>
+
+            <!-- FinTech Input -->
+            <div id="input-fintech" class="input-container" style="display: none;">
+                <div class="slide-in border-2 border-gray-800 rounded-xl p-8 bg-gray-900/50">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="file-text" class="w-5 h-5 text-green-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold text-white">Upload Financial Statement</h3>
+                    </div>
+                    <div id="fintech-dropzone" class="drop-zone border-2 border-dashed border-gray-700 rounded-lg p-12 text-center cursor-pointer">
+                        <i data-lucide="upload-cloud" class="w-12 h-12 text-gray-600 mx-auto mb-4"></i>
+                        <p class="text-gray-400 mb-2">Drag and drop your PDF or Excel file</p>
+                        <p class="text-sm text-gray-600">or click to browse</p>
+                        <input type="file" id="fintech-file" class="hidden" accept=".pdf,.xlsx,.xls">
+                    </div>
+                    <button id="analyze-fintech-btn" class="mt-4 w-full md:w-auto px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition" disabled>
+                        Analyze Statement
+                    </button>
+                </div>
+            </div>
+
+            <!-- E-commerce Input -->
+            <div id="input-ecommerce" class="input-container" style="display: none;">
+                <div class="slide-in border-2 border-gray-800 rounded-xl p-8 bg-gray-900/50">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="link" class="w-5 h-5 text-yellow-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold text-white">Seller Profile URL</h3>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="ecommerce-input"
+                        placeholder="Paste Amazon/Flipkart seller URL..."
+                        class="w-full px-4 py-4 bg-black border-2 border-gray-800 rounded-lg text-white placeholder-gray-600 focus:border-yellow-500 focus:outline-none transition"
+                    >
+                    <button id="analyze-ecommerce-btn" class="mt-4 w-full md:w-auto px-8 py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition">
+                        Analyze Seller
+                    </button>
+                </div>
+            </div>
+
+            <!-- EdTech Input -->
+            <div id="input-edtech" class="input-container" style="display: none;">
+                <div class="slide-in border-2 border-gray-800 rounded-xl p-8 bg-gray-900/50">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="file-text" class="w-5 h-5 text-pink-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold text-white">Upload Course Document</h3>
+                    </div>
+                    <div id="edtech-dropzone" class="drop-zone border-2 border-dashed border-gray-700 rounded-lg p-12 text-center cursor-pointer">
+                        <i data-lucide="upload" class="w-12 h-12 text-gray-600 mx-auto mb-4"></i>
+                        <p class="text-gray-400 mb-2">Upload course brochure or syllabus</p>
+                        <p class="text-sm text-gray-600">PDF, DOCX supported</p>
+                        <input type="file" id="edtech-file" class="hidden" accept=".pdf,.docx,.doc">
+                    </div>
+                    <button id="analyze-edtech-btn" class="mt-4 w-full md:w-auto px-8 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition" disabled>
+                        Analyze Course
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Scanning Status Component -->
+        <section id="scanning-section" class="mb-10" style="display: none;">
+            <div class="slide-in border-2 border-gray-800 rounded-xl p-8 bg-gray-900/50">
+                <h3 class="text-lg font-semibold text-white mb-6 text-center">Analyzing...</h3>
+                <div class="space-y-4">
+                    <div class="progress-step flex items-center space-x-4" id="step-1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-700 flex items-center justify-center">
+                            <i data-lucide="search" class="w-5 h-5 text-indigo-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-medium">Parsing URL/Document...</p>
+                            <div class="w-full bg-gray-800 rounded-full h-2 mt-2">
+                                <div class="bg-indigo-600 h-2 rounded-full" style="width: 0%" id="progress-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-step flex items-center space-x-4" id="step-2">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-700 flex items-center justify-center">
+                            <i data-lucide="brain" class="w-5 h-5 text-indigo-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-medium">Analyzing patterns...</p>
+                            <div class="w-full bg-gray-800 rounded-full h-2 mt-2">
+                                <div class="bg-indigo-600 h-2 rounded-full" style="width: 0%" id="progress-2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-step flex items-center space-x-4" id="step-3">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-700 flex items-center justify-center">
+                            <i data-lucide="award" class="w-5 h-5 text-indigo-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-medium">Generating Trust Score...</p>
+                            <div class="w-full bg-gray-800 rounded-full h-2 mt-2">
+                                <div class="bg-indigo-600 h-2 rounded-full" style="width: 0%" id="progress-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Display Component -->
+        <section id="result-section" class="mb-10" style="display: none;">
+            <div class="fade-in border-2 border-gray-800 rounded-xl p-8 bg-gradient-to-br from-gray-900 to-gray-800">
+                <h3 class="text-2xl font-bold text-white mb-6 text-center">Trust Analysis Complete</h3>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
+                    <!-- Gauge -->
+                    <div class="gauge-container">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="#1f2937" stroke-width="20"></circle>
+                            <circle id="gauge-circle" cx="100" cy="100" r="80" fill="none" stroke="#4f46e5" stroke-width="20" stroke-dasharray="502.4" stroke-dashoffset="502.4" stroke-linecap="round" transform="rotate(-90 100 100)" class="gauge"></circle>
+                            <text x="100" y="95" text-anchor="middle" class="text-5xl font-bold fill-white" id="score-text">0</text>
+                            <text x="100" y="120" text-anchor="middle" class="text-sm fill-gray-400">Trust Score</text>
+                        </svg>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="flex-1 max-w-md">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Rating</span>
+                                <span class="text-white font-semibold" id="rating-text">Excellent</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Confidence Level</span>
+                                <span class="text-white font-semibold" id="confidence-text">95%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Risk Level</span>
+                                <span class="text-white font-semibold" id="risk-text">Low</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                            <p class="text-sm text-gray-300" id="recommendation-text">
+                                This listing shows strong trust indicators. Verified contact details and positive historical data.
+                            </p>
+                        </div>
+
+                        <button id="share-badge-btn" class="share-btn mt-6 w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg flex items-center justify-center space-x-2">
+                            <i data-lucide="share-2" class="w-5 h-5"></i>
+                            <span>Share Trust Badge</span>
+                        </button>
+
+                        <button id="analyze-another-btn" class="mt-3 w-full px-6 py-3 bg-gray-800 text-gray-300 font-semibold rounded-lg hover:bg-gray-700 transition">
+                            Analyze Another
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 text-sm mt-16 pb-8">
+            <div class="flex items-center justify-center space-x-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Powered by AI</span>
+            </div>
+            <p class="mt-2 text-xs text-gray-700">
+                <!-- API Integration Points: Gemini API, Puppeteer Scraping, Redis Caching -->
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // State Management
+        const state = {
+            selectedIndustry: null,
+            isScanning: false,
+            trustScore: 0,
+            uploadedFile: null
+        };
+
+        // Selectors
+        const selectorCards = document.querySelectorAll('.selector-card');
+        const inputSection = document.getElementById('input-section');
+        const scanningSection = document.getElementById('scanning-section');
+        const resultSection = document.getElementById('result-section');
+
+        // Industry Selection Handler
+        selectorCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const industry = card.dataset.industry;
+                
+                // Update state
+                state.selectedIndustry = industry;
+                
+                // Update UI
+                selectorCards.forEach(c => c.classList.remove('card-selected'));
+                card.classList.add('card-selected');
+                
+                // Show input section
+                showInputSection(industry);
+            });
+        });
+
+        function showInputSection(industry) {
+            // Hide all input containers
+            document.querySelectorAll('.input-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            
+            // Show selected input
+            const inputContainer = document.getElementById(`input-${industry}`);
+            if (inputContainer) {
+                inputSection.style.display = 'block';
+                inputContainer.style.display = 'block';
+                
+                // Re-initialize icons
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+        }
+
+        // Real Estate URL Analysis
+        document.getElementById('analyze-url-btn')?.addEventListener('click', () => {
+            const url = document.getElementById('url-input').value;
+            if (url.trim()) {
+                startAnalysis();
+            } else {
+                alert('Please enter a valid URL');
+            }
+        });
+
+        // FinTech File Upload
+        const fintechDropzone = document.getElementById('fintech-dropzone');
+        const fintechFileInput = document.getElementById('fintech-file');
+        const analyzeFintechBtn = document.getElementById('analyze-fintech-btn');
+
+        fintechDropzone?.addEventListener('click', () => fintechFileInput.click());
+
+        fintechDropzone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fintechDropzone.classList.add('drag-over');
+        });
+
+        fintechDropzone?.addEventListener('dragleave', () => {
+            fintechDropzone.classList.remove('drag-over');
+        });
+
+        fintechDropzone?.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fintechDropzone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0], 'fintech');
+            }
+        });
+
+        fintechFileInput?.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0], 'fintech');
+            }
+        });
+
+        analyzeFintechBtn?.addEventListener('click', () => {
+            if (state.uploadedFile) {
+                startAnalysis();
+            }
+        });
+
+        // EdTech File Upload
+        const edtechDropzone = document.getElementById('edtech-dropzone');
+        const edtechFileInput = document.getElementById('edtech-file');
+        const analyzeEdtechBtn = document.getElementById('analyze-edtech-btn');
+
+        edtechDropzone?.addEventListener('click', () => edtechFileInput.click());
+
+        edtechDropzone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            edtechDropzone.classList.add('drag-over');
+        });
+
+        edtechDropzone?.addEventListener('dragleave', () => {
+            edtechDropzone.classList.remove('drag-over');
+        });
+
+        edtechDropzone?.addEventListener('drop', (e) => {
+            e.preventDefault();
+            edtechDropzone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0], 'edtech');
+            }
+        });
+
+        edtechFileInput?.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0], 'edtech');
+            }
+        });
+
+        analyzeEdtechBtn?.addEventListener('click', () => {
+            if (state.uploadedFile) {
+                startAnalysis();
+            }
+        });
+
+        // E-commerce Analysis
+        document.getElementById('analyze-ecommerce-btn')?.addEventListener('click', () => {
+            const url = document.getElementById('ecommerce-input').value;
+            if (url.trim()) {
+                startAnalysis();
+            } else {
+                alert('Please enter a valid URL');
+            }
+        });
+
+        function handleFileUpload(file, type) {
+            state.uploadedFile = file;
+            const dropzone = document.getElementById(`${type}-dropzone`);
+            dropzone.innerHTML = `
+                <i data-lucide="file-check" class="w-12 h-12 text-green-500 mx-auto mb-4"></i>
+                <p class="text-green-400 mb-2">${file.name}</p>
+                <p class="text-sm text-gray-600">${(file.size / 1024).toFixed(2)} KB</p>
+            `;
+            lucide.createIcons();
+            
+            const analyzeBtn = document.getElementById(`analyze-${type}-btn`);
+            analyzeBtn.disabled = false;
+            analyzeBtn.classList.remove('opacity-50');
+        }
+
+        function startAnalysis() {
+            // Hide input section
+            inputSection.style.display = 'none';
+            
+            // Show scanning section
+            scanningSection.style.display = 'block';
+            state.isScanning = true;
+            
+            // Animate progress steps
+            animateScanning();
+        }
+
+        function animateScanning() {
+            const steps = [
+                { id: 'step-1', progress: 'progress-1', duration: 1500 },
+                { id: 'step-2', progress: 'progress-2', duration: 2000 },
+                { id: 'step-3', progress: 'progress-3', duration: 1500 }
+            ];
+            
+            let currentStep = 0;
+            
+            function processStep() {
+                if (currentStep >= steps.length) {
+                    // Analysis complete
+                    setTimeout(() => {
+                        showResults();
+                    }, 500);
+                    return;
+                }
+                
+                const step = steps[currentStep];
+                const stepEl = document.getElementById(step.id);
+                const progressBar = document.getElementById(step.progress);
+                
+                stepEl.classList.add('active');
+                
+                // Animate progress bar
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        stepEl.classList.remove('active');
+                        stepEl.classList.add('completed');
+                        currentStep++;
+                        setTimeout(processStep, 300);
+                    }
+                }, step.duration / 20);
+            }
+            
+            processStep();
+        }
+
+        function showResults() {
+            // Hide scanning section
+            scanningSection.style.display = 'none';
+            
+            // Generate random trust score (simulate API response)
+            const trustScore = Math.floor(Math.random() * 30) + 70; // 70-100
+            state.trustScore = trustScore;
+            
+            // Show result section
+            resultSection.style.display = 'block';
+            
+            // Animate gauge
+            animateGauge(trustScore);
+            
+            // Update result details
+            updateResultDetails(trustScore);
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        function animateGauge(score) {
+            const gaugeCircle = document.getElementById('gauge-circle');
+            const scoreText = document.getElementById('score-text');
+            const circumference = 502.4;
+            const offset = circumference - (score / 100) * circumference;
+            
+            // Determine color based on score
+            let color = '#ef4444'; // red
+            if (score >= 70) color = '#22c55e'; // green
+            else if (score >= 40) color = '#eab308'; // yellow
+            
+            gaugeCircle.style.stroke = color;
+            
+            // Animate
+            setTimeout(() => {
+                gaugeCircle.style.strokeDashoffset = offset;
+            }, 100);
+            
+            // Animate score number
+            let currentScore = 0;
+            const increment = score / 50;
+            const interval = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= score) {
+                    currentScore = score;
+                    clearInterval(interval);
+                }
+                scoreText.textContent = Math.round(currentScore);
+            }, 30);
+        }
+
+        function updateResultDetails(score) {
+            const ratingText = document.getElementById('rating-text');
+            const confidenceText = document.getElementById('confidence-text');
+            const riskText = document.getElementById('risk-text');
+            const recommendationText = document.getElementById('recommendation-text');
+            
+            if (score >= 80) {
+                ratingText.textContent = 'Excellent';
+                ratingText.className = 'text-green-500 font-semibold';
+                riskText.textContent = 'Low';
+                riskText.className = 'text-green-500 font-semibold';
+                recommendationText.textContent = 'This listing shows strong trust indicators. Verified contact details and positive historical data.';
+            } else if (score >= 60) {
+                ratingText.textContent = 'Good';
+                ratingText.className = 'text-yellow-500 font-semibold';
+                riskText.textContent = 'Medium';
+                riskText.className = 'text-yellow-500 font-semibold';
+                recommendationText.textContent = 'This listing appears legitimate but shows some minor inconsistencies. Proceed with standard verification.';
+            } else {
+                ratingText.textContent = 'Caution';
+                ratingText.className = 'text-red-500 font-semibold';
+                riskText.textContent = 'High';
+                riskText.className = 'text-red-500 font-semibold';
+                recommendationText.textContent = 'This listing shows concerning patterns. We recommend additional verification before proceeding.';
+            }
+            
+            confidenceText.textContent = `${Math.floor(Math.random() * 10) + 90}%`;
+        }
+
+        // Share Badge Handler
+        document.getElementById('share-badge-btn')?.addEventListener('click', () => {
+            // Simulate share functionality
+            const shareData = {
+                title: 'TrustCheck Analysis',
+                text: `Trust Score: ${state.trustScore}/100`,
+                url: window.location.href
+            };
+            
+            if (navigator.share) {
+                navigator.share(shareData);
+            } else {
+                alert('Trust Score: ' + state.trustScore + '\n\nShare functionality would integrate with Web Share API or custom sharing modal.');
+            }
+        });
+
+        // Analyze Another Handler
+        document.getElementById('analyze-another-btn')?.addEventListener('click', () => {
+            // Reset state
+            state.selectedIndustry = null;
+            state.isScanning = false;
+            state.trustScore = 0;
+            state.uploadedFile = null;
+            
+            // Reset UI
+            resultSection.style.display = 'none';
+            scanningSection.style.display = 'none';
+            inputSection.style.display = 'none';
+            
+            selectorCards.forEach(c => c.classList.remove('card-selected'));
+            
+            // Reset progress bars
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            document.querySelectorAll('[id^="progress-"]').forEach(bar => {
+                bar.style.width = '0%';
+            });
+            
+            // Clear inputs
+            document.getElementById('url-input').value = '';
+            document.getElementById('ecommerce-input').value = '';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        /*
+        ============================================
+        API INTEGRATION POINTS (Backend Ready)
+        ============================================
+        
+        1. GEMINI API ANALYSIS
+        async function analyzeWithGemini(data) {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    industry: state.selectedIndustry,
+                    data: data,
+                    analysisType: 'trust-score'
+                })
+            });
+            return await response.json();
+        }
+        
+        2. PUPPETEER SCRAPING
+        async function scrapeURL(url) {
+            const response = await fetch('/api/scrape', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+            return await response.json();
+        }
+        
+        3. FILE PROCESSING
+        async function processDocument(file) {
+            const formData = new FormData();
+            formData.append('document', file);
+            formData.append('industry', state.selectedIndustry);
+            
+            const response = await fetch('/api/process-document', {
+                method: 'POST',
+                body: formData
+            });
+            return await response.json();
+        }
+        
+        4. REDIS CACHING
+        // Cache results for faster repeat analyses
+        async function getCachedAnalysis(key) {
+            const response = await fetch(`/api/cache/${key}`);
+            return await response.json();
+        }
+        */
+    </script>
+</body>
+</html>
